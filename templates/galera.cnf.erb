@@ -1,0 +1,13 @@
+# Galera clustering. Controlled by Puppet.
+[mysqld]
+wsrep_cluster_address="gcomm://<%= (@cluster_array -= [@ipaddress]).join(",") %>"
+wsrep_provider='/usr/lib/libgalera_smm.so'
+wsrep_provider_options = "gcs.recv_q_hard_limit= <%= (@memorytotal.to_i + @swapsize.to_i) / 2 %>G;gmcast.segment = <%= @ipaddress.match(/\A\d+/) %>"
+wsrep_provider_options = "<%= @wsrep_options.join(";") %>"
+<% if @sst_donor -%>wsrep_sst_donor="<%= @sst_donor -%>" <% end %>
+wsrep_slave_threads = <%= @processorcount.to_i * 2 %>
+wsrep_node_name = <%= @fqdn %>
+<% if @cluster_name -%>wsrep_cluster_name ="<%= @cluster_name -%>" <% end %>
+wsrep_sst_method = <%= @sst_method %>
+wsrep_sst_auth = <%= @sst_user %>:<%= @sst_pass %>
+wsrep_retry_autocommit = 5

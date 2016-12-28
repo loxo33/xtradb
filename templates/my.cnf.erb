@@ -1,0 +1,88 @@
+### xtradb my.cnf controlled by Puppet.
+
+[client]
+port = 3306
+socket = /var/run/mysqld/mysqld.sock
+
+[mysqld_safe]
+nice = 0
+socket = /var/run/mysqld/mysqld.sock
+
+[mysqld]
+### Basic Settings ###
+user	 	 = mysql
+basedir	 	 = /usr
+pid-file 	 = /var/run/mysqld/mysqld.pid
+socket 		 = /var/run/mysqld/mysqld.sock
+datadir  	 = /var/lib/mysql
+tmpdir	         = /tmp
+bind-address 	 = 0.0.0.0
+port 		 = 3306
+open-files-limit = 65535
+skip-external-locking
+lc-messages-dir = /usr/share/mysql
+
+binlog_format		= ROW
+character_set_server	= utf8
+collation_server	= utf8_general_ci
+default-storage-engine  = InnoDB
+expire_logs_days 	= 10
+
+### Innodb ###
+innodb_autoinc_lock_mode 	= 2
+innodb_buffer_pool_size         = 3G
+innodb_doublewrite 		= 1
+innodb_file_per_table 		= 1
+innodb_flush_log_at_trx_commit 	= 2 
+innodb_lock_wait_timeout 	= 60
+innodb_stats_on_metadata 	= 0
+innodb_log_file_size		= 512M
+innodb_file_format              = Barracuda
+
+### Logging ###
+log-error                  = /var/log/mysql/mysql.err 
+slow-query-log             = 1
+slow_query_log_file        = /var/log/mysql/mysql.slow
+long_query_time            = 10 # in seconds
+expire_logs_days           = 14
+innodb_print_all_deadlocks = 1
+log-queries-not-using-indexes
+
+### Fine Tuning ###
+transaction-isolation   = READ-COMMITTED
+key_buffer_size 	= 256M
+lock_wait_timeout	= 300
+max_allowed_packet 	= 128M
+max_binlog_size 	= 128M
+max_connections 	= 500
+myisam-recover-options 	= BACKUP
+myisam_sort_buffer_size = 64M
+net_buffer_length 	= 8K
+#query_cache_limit 	= 8M
+#query_cache_size 	= 16M
+read_buffer_size 	= 8M
+read_rnd_buffer_size	= 8M
+sort_buffer_size 	= 16M
+#table_cache 		= 524288
+table_definition_cache 	= 65535
+table_open_cache 	= 65535
+thread_cache_size 	= 8
+
+# Ensure that queries don’t run for too long if they don’t send any data after a minute.
+net_read_timeout=60
+net_write_timeout=60
+skip_name_resolve
+
+[mysqldump]
+max_allowed_packet 	= 32M
+quick
+quote-names
+
+[mysql]
+
+[isamchk]
+!includedir /etc/mysql/conf.d/
+key_buffer 		= 256M
+read_buffer 		= 16M
+sort_buffer_size 	= 256M
+write_buffer 		= 16M

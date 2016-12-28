@@ -1,0 +1,8 @@
+# File Managed by Puppet
+
+[client]
+user=root
+host=localhost
+<% unless @rootpw == 'UNSET' -%>
+password=<%= @rootpw %>
+<% end -%>

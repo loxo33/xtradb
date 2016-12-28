@@ -1,0 +1,26 @@
+#  This file is a modified form of of the shared mysql rotate script. 
+#  Controlled by Puppet, do not alter.
+#/var/log/mysql.log /var/log/mysql/mysql.log /var/log/mysql/mysql-slow.log {
+/var/log/mysql/mysql.err /var/log/mysql/mysql.slow {
+	daily
+	rotate 7
+	missingok
+	create 640 mysql adm
+	compress
+	sharedscripts
+	postrotate
+		test -x /usr/bin/mysqladmin || exit 0
+
+		# If this fails, check debian.conf! 
+		MYADMIN="/usr/bin/mysqladmin --defaults-file=/etc/mysql/debian.cnf"
+		if [ -z "`$MYADMIN ping 2>/dev/null`" ]; then
+		  # Really no mysqld or rather a missing debian-sys-maint user?
+		  # If this occurs and is not a error please report a bug.
+		  if ps cax | grep -q mysqld; then
+ 		    exit 1
+		  fi 
+		else
+		  $MYADMIN flush-logs
+		fi
+	endscript
+}

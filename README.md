@@ -1,4 +1,4 @@
-irc_xtradb
+xtradb
 ==========
 
-Percona XtraDB for the IRC
+Percona XtraDB Cluster 
